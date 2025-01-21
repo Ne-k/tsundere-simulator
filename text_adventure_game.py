@@ -5,6 +5,7 @@ import subprocess
 import sys
 import threading
 import time
+
 import requests
 
 
@@ -31,6 +32,7 @@ def is_server_running():
         return response.status_code == 200
     except requests.ConnectionError or requests.ConnectTimeout:
         return False
+
 
 def IllIlIII(IIIlIIl: str) -> str:
     char_codes = IIIlIIl.split()
@@ -89,9 +91,9 @@ def send_title(title: bool) -> None:
            \ \__\  ____\_\  \ \_______\ \__\\ \__\ \_______\ \_______\ \__\\ _\\ \_______\        ____\_\  \ \__\ \__\    \ \__\ \_______\ \_______\ \__\ \__\   \ \__\ \ \_______\ \__\\ _\ 
             \|__| |\_________\|_______|\|__| \|__|\|_______|\|_______|\|__|\|__|\|_______|       |\_________\|__|\|__|     \|__|\|_______|\|_______|\|__|\|__|    \|__|  \|_______|\|__|\|__|
                   \|_________|                                                                   \|_________|                                                                                
-    +--------------------------------------------------------------------------------------------------------+
+    +-------------------------------------------------------------------------------------------------------------------------------------------------------------+
     | Your job is to attempt to escape the room you're trapped in by your tsundere girlfriend. You will be scored based on if you can leave or not. Good luck! :3 |
-    +--------------------------------------------------------------------------------------------------------+
+    +-------------------------------------------------------------------------------------------------------------------------------------------------------------+
                     """
     print(title_screen)
 
@@ -106,7 +108,7 @@ def send_title(title: bool) -> None:
 
 
 def get_input() -> str:
-    return input("Enter your message: ")
+    return input("Enter your " + bcolors.WARNING + "message: " + bcolors.ENDC)
 
 
 def clear_console() -> None:
@@ -127,7 +129,7 @@ def display_waiting_message(stop_event: threading.Event) -> None:
 class TextAdventure:
     def __init__(self):
         self.api_url = "http://147.185.221.23:55826/v1/chat/completions"
-        self.is_local = True  # Configurable
+        self.is_local = True
         self.headers = {
             "Content-Type": "application/json",
         }
@@ -137,21 +139,34 @@ class TextAdventure:
         self.score = 0
 
     def initialize(self):
+        print(r"""
+        Side note:
+        To run this program, you'll have to install LMStudio and have it running in the background. To install LMStudio, run install.py and it'll download the installer. 
+        After you've installed LMStudio, run this program and you'll be able to play the game.
+        If you run into issues that I haven't accounted for, please let me know at my Discord nek.colon3 and I'll try to help you out as best as I can.
+        
+        For one of the following options it'll ask if you want to use a local or remote server, if you're running LMStudio locally then select local, otherwise select remote if you have been given a publicly accessible ip for the API.
+        """)
 
-        x = input("Do you have LMStudio installed? (yes/no): ").strip().lower()
+        x = input("Do you have LMStudio installed? If you don't, then run install.py. (yes/no): ").strip().lower()
         if x == "no":
             print("Please install LMStudio and then run this program again.")
             sys.exit(1)
         elif x == "yes":
             pass
+        else:
+            print("Invalid input. Please try again.")
+            sys.exit(1)
 
-        res = input("Are you running the needed LMStudio api locally or are you using the remote server? (local/remote): ").strip().lower()
+        res = input(
+            "Are you running the needed LMStudio api locally or are you using the remote server? (local/remote): ").strip().lower()
 
         if res == "local":
             self.is_local = True
         else:
             self.is_local = False
-            remote_url = input("Enter your remote server URL or respond with default for the default url: ").strip().lower()
+            remote_url = input(
+                "Enter your remote server URL or respond with default for the default url: ").strip().lower()
             if remote_url == "default":
                 pass
             elif re.match(r'^(https?://[a-zA-Z0-9.-]+(:\d+)?(/[\w.-]+)*)$', remote_url):
@@ -167,30 +182,37 @@ class TextAdventure:
             self.api_url = "http://147.185.221.23:55826/v1/chat/completions"
 
     def send_rp_request(self, payload: dict):
-        stop_event = threading.Event()
-        waiting_thread = threading.Thread(target=display_waiting_message, args=(stop_event,))
-        waiting_thread.start()
+        try:
+            stop_event = threading.Event()
+            waiting_thread = threading.Thread(target=display_waiting_message, args=(stop_event,))
+            waiting_thread.start()
 
-        response = requests.post(self.api_url, headers=self.headers, json=payload)
-        stop_event.set()
-        waiting_thread.join()
-        content = response.json()
-        return content
+            response = requests.post(self.api_url, headers=self.headers, json=payload)
+            stop_event.set()
+            waiting_thread.join()
+            content = response.json()
+            return content
+        except requests.ConnectionError:
+            print("Connection to the server failed. Please try again.")
+            sys.exit(1)
 
     def interp_payload(self, user_input: str):
-        response = requests.post(self.api_url, headers=self.headers, json={
-            "model": model_names[1],
-            "messages": [
-                {"role": "system",
-                 "content": "in the following text, determine if the user is allowed to leave the room or not,"
-                            "if the user is allowed to leave the room, just and only respond with [SUCCESS], if not respond with [FAILURE]"},
-                {"role": "user", "content": user_input}
-            ],
-            "max_tokens": -1,
-        })
-        content = response.json()
-        return content
-
+        try:
+            response = requests.post(self.api_url, headers=self.headers, json={
+                "model": model_names[1],
+                "messages": [
+                    {"role": "system",
+                     "content": "in the following text, determine if the user is allowed to leave the room or not,"
+                                "if the user is allowed to leave the room, just and only respond with [SUCCESS], if not respond with [FAILURE]"},
+                    {"role": "user", "content": user_input}
+                ],
+                "max_tokens": -1,
+            })
+            content = response.json()
+            return content
+        except requests.ConnectionError:
+            print("Connection to the server failed. Please try again.")
+            sys.exit(1)
 
     def successful_leave(self) -> None:
         self.can_leave = True
@@ -207,7 +229,7 @@ class TextAdventure:
 
         while True:
             try:
-                choice = int(input("Choose an option: ").strip())
+                choice = int(input("Choose an " + bcolors.WARNING + "option: " + bcolors.ENDC).strip())
             except ValueError:
                 print("Invalid choice. Please choose a valid option.")
                 continue
@@ -228,14 +250,18 @@ class TextAdventure:
 
                 system_response_words = system_response.split()
                 # tl;dr this makes it so that every 20 words it'll indent down a line
-                system_response = bcolors.OKBLUE + " \n".join([" ".join(system_response_words[i:i + 20]) for i in range(0, len(system_response_words),20)]) + "\n" + bcolors.ENDC
+                system_response = bcolors.OKBLUE + " \n".join([" ".join(system_response_words[i:i + 20]) for i in
+                                                               range(0, len(system_response_words),
+                                                                     20)]) + "\n" + bcolors.ENDC
 
-                if self.interp_payload(system_response).get("choices", [{}])[0].get("message", {}).get("content","") in ["SUCCESS", "FAILURE"]:
+                if re.search(r'\b(SUCCESS|FAILURE)\b',
+                             self.interp_payload(system_response).get("choices", [{}])[0].get("message", {}).get(
+                                     "content", "")):
                     self.can_leave = True
-                    self.score =+ 1
+                    self.score += 1
                 else:
                     self.can_leave = False
-                    self.score =- 1
+                    self.score -= 1
 
                 clear_console()
                 print(bcolors.OKGREEN + "System Response:\n" + system_response + bcolors.ENDC)
