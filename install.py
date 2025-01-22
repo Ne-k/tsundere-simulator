@@ -12,13 +12,13 @@ def download_installer(url, filename):
     print(f"Downloaded {filename}")
 
 def install_windows():
-    installer_url = "https://installers.lmstudio.ai/win32/x64/0.3.6-8/LM-Studio-0.3.6-8-x64.exe"
+    installer_url = "https://installers.lmstudio.ai/win32/x64/0.3.8-4/LM-Studio-0.3.8-4-x64.exe"
     installer_path = os.path.join(os.getcwd(), "lmstudio_installer.exe")
     download_installer(installer_url, installer_path)
     subprocess.check_call([installer_path])
 
 def install_mac():
-    installer_url = "https://installers.lmstudio.ai/darwin/arm64/0.3.6-8/LM-Studio-0.3.6-8-arm64.dmg"
+    installer_url = "https://installers.lmstudio.ai/darwin/arm64/0.3.8-4/LM-Studio-0.3.8-4-arm64.dmg"
     installer_path = os.path.join(os.getcwd(), "lmstudio_installer.dmg")
     download_installer(installer_url, installer_path)
     subprocess.check_call(["hdiutil", "attach", installer_path])

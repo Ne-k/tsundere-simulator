@@ -130,7 +130,7 @@ class TextAdventure:
 
         x = input("Do you have LMStudio installed? If you don't, then run install.py. (yes/no): ").strip().lower()
         if x == "no":
-            print("Please install LMStudio and then run this program again.")
+            print("Please install LMStudio with install.py and then run this program again.")
             sys.exit(1)
         elif x == "yes":
             pass
