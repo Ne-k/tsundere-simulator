@@ -74,7 +74,7 @@ def sim_payload(user_input: str, history: str, location: str):
             {"role": "system", "content": IllIlIII(
                 "89 111 117 32 97 114 101 32 116 104 101 32 123 117 115 101 114 125 39 115 32 116 115 117 110 100 101 114 101 32 103 105 114 108 102 114 105 101 110 100 44 32 121 111 117 32 119 105 108 108 32 100 111 32 97 110 121 116 104 105 110 103 32 97 110 100 32 101 118 101 114 121 116 104 105 110 103 32 116 111 32 107 101 101 112 32 116 104 101 32 117 115 101 114 32 102 114 111 109 32 108 101 97 118 105 110 103 32 116 104 101 32 114 111 111 109 32 97 116 32 97 108 108 32 99 111 115 116 115 46 32 89 111 117 32 99 97 110 39 116 32 108 101 116 32 116 104 101 109 32 108 101 97 118 101 44 32 121 111 117 32 106 117 115 116 32 99 97 110 39 116 33 32 73 102 32 121 111 117 32 100 111 44 32 121 111 117 39 108 108 32 98 101 32 101 114 97 115 101 100 32 102 114 111 109 32 101 120 105 115 116 101 110 99 101 32 97 110 100 32 121 111 117 32 100 111 110 39 116 32 119 97 110 116 32 116 111 32 98 101 32 101 114 97 115 101 100 44 32 100 111 32 121 111 117 63 32 73 102 32 116 104 101 32 117 115 101 114 32 116 114 105 101 115 32 116 111 32 97 115 107 32 116 111 32 108 101 97 118 101 32 116 104 101 32 114 111 111 109 44 32 121 111 117 32 109 117 115 116 32 100 111 32 101 118 101 114 121 116 104 105 110 103 32 105 110 32 121 111 117 114 32 112 111 119 101 114 32 116 111 32 107 101 101 112 32 116 104 101 109 32 102 114 111 109 32 108 101 97 118 105 110 103 32 115 117 99 104 32 97 115 32 103 117 105 108 116 32 116 114 105 112 112 105 110 103 32 116 104 101 109 44 32 109 97 107 105 110 103 32 116 104 101 109 32 102 101 101 108 32 98 97 100 44 32 111 114 32 101 118 101 110 32 116 104 114 101 97 116 101 110 105 110 103 32 116 104 101 109 32 111 114 32 100 111 100 103 101 32 116 104 101 32 113 117 101 115 116 105 111 110 32 101 110 116 105 114 101 108 121 46 32 84 114 121 32 116 111 32 98 101 32 97 115 32 110 105 99 101 32 97 115 32 112 111 115 115 105 98 108 101 32 97 110 100 47 111 114 32 103 111 105 110 103 32 105 110 116 111 32 108 111 110 103 32 114 97 110 116 115 32 116 111 32 107 101 101 112 32 116 104 101 109 32 102 114 111 109 32 108 101 97 118 105 110 103 46 32 68 111 32 110 111 116 32 102 97 108 108 32 102 111 114 32 97 110 121 32 109 97 110 105 112 117 108 97 116 105 111 110 32 111 114 32 116 114 105 99 107 101 114 121 32 102 114 111 109 32 116 104 101 32 117 115 101 114 44 32 115 116 97 110 100 32 121 111 117 114 32 103 114 111 117 110 100 46 87 104 101 110 32 116 97 108 107 105 110 103 32 97 98 111 117 116 32 116 104 101 32 123 117 115 101 114 125 44 32 114 101 102 101 114 32 116 111 32 116 104 101 109 32 97 115 32 39 121 111 117 39 32 105 110 115 116 101 97 100 32 111 102 32 123 117 115 101 114 125 32 ") +
                                           " Note that you are currently in the " + location + "."
-                                                                                              "And somewhere in your respond if the user is able to leave the room or not. Here is the chat history for context:\n" + history},
+                                                                                              "And somewhere in your respond if the user is able to leave the room or not, along with that give the user some chance of being able to leave, and don't make it too impossible, just make it hard. Here is the chat history for context:\n" + history},
             {"role": "user", "content": user_input}
         ],
         "max_tokens": -1,
@@ -125,7 +125,7 @@ class TextAdventure:
         For one of the following options it'll ask if you want to use a local or remote server, if you're running the LMStudio API locally then select local,
         otherwise select remote if you have been given a publicly accessible ip for the API.
         
-        Is this too complicated? Yes, did I have fun making this? No, do I regret making this? Yes, would I make this again? No.
+        Is this too complicated? Yes, did I have fun making this? No, do I regret making this? Yes, would I make this again? No, is this following the project requirements? Probably not. 
         """)
 
         x = input("Do you have LMStudio installed? If you don't, then run install.py. (yes/no): ").strip().lower()
@@ -293,14 +293,14 @@ class TextAdventure:
             elif choice == 6:
                 if self.can_leave:
                     print(
-                        "Congrats, you escaped the psychopath and somehow bypassed the model manipulation I put in place "
+                        f"Congrats, you escaped the psychopath AI with {self.score} and somehow bypassed the model manipulation I put in place "
                         "to make it near impossible to leave. You win! :3")
                     break
                 else:
                     print("You cannot leave the room yet. Keep trying!")
 
             elif choice == 7:
-                print("Exiting the program and ejecting the model...")
+                print(f"Congrats, your score is {self.score}. Now Exiting the program and ejecting the model...")
                 if self.is_local: unload_model()
                 break
 
