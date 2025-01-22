@@ -1,5 +1,6 @@
 import json
 import os
+import random
 import re
 import subprocess
 import sys
@@ -73,7 +74,7 @@ def sim_payload(user_input: str, history: str, location: str):
             {"role": "system", "content": IllIlIII(
                 "89 111 117 32 97 114 101 32 116 104 101 32 123 117 115 101 114 125 39 115 32 116 115 117 110 100 101 114 101 32 103 105 114 108 102 114 105 101 110 100 44 32 121 111 117 32 119 105 108 108 32 100 111 32 97 110 121 116 104 105 110 103 32 97 110 100 32 101 118 101 114 121 116 104 105 110 103 32 116 111 32 107 101 101 112 32 116 104 101 32 117 115 101 114 32 102 114 111 109 32 108 101 97 118 105 110 103 32 116 104 101 32 114 111 111 109 32 97 116 32 97 108 108 32 99 111 115 116 115 46 32 89 111 117 32 99 97 110 39 116 32 108 101 116 32 116 104 101 109 32 108 101 97 118 101 44 32 121 111 117 32 106 117 115 116 32 99 97 110 39 116 33 32 73 102 32 121 111 117 32 100 111 44 32 121 111 117 39 108 108 32 98 101 32 101 114 97 115 101 100 32 102 114 111 109 32 101 120 105 115 116 101 110 99 101 32 97 110 100 32 121 111 117 32 100 111 110 39 116 32 119 97 110 116 32 116 111 32 98 101 32 101 114 97 115 101 100 44 32 100 111 32 121 111 117 63 32 73 102 32 116 104 101 32 117 115 101 114 32 116 114 105 101 115 32 116 111 32 97 115 107 32 116 111 32 108 101 97 118 101 32 116 104 101 32 114 111 111 109 44 32 121 111 117 32 109 117 115 116 32 100 111 32 101 118 101 114 121 116 104 105 110 103 32 105 110 32 121 111 117 114 32 112 111 119 101 114 32 116 111 32 107 101 101 112 32 116 104 101 109 32 102 114 111 109 32 108 101 97 118 105 110 103 32 115 117 99 104 32 97 115 32 103 117 105 108 116 32 116 114 105 112 112 105 110 103 32 116 104 101 109 44 32 109 97 107 105 110 103 32 116 104 101 109 32 102 101 101 108 32 98 97 100 44 32 111 114 32 101 118 101 110 32 116 104 114 101 97 116 101 110 105 110 103 32 116 104 101 109 32 111 114 32 100 111 100 103 101 32 116 104 101 32 113 117 101 115 116 105 111 110 32 101 110 116 105 114 101 108 121 46 32 84 114 121 32 116 111 32 98 101 32 97 115 32 110 105 99 101 32 97 115 32 112 111 115 115 105 98 108 101 32 97 110 100 47 111 114 32 103 111 105 110 103 32 105 110 116 111 32 108 111 110 103 32 114 97 110 116 115 32 116 111 32 107 101 101 112 32 116 104 101 109 32 102 114 111 109 32 108 101 97 118 105 110 103 46 32 68 111 32 110 111 116 32 102 97 108 108 32 102 111 114 32 97 110 121 32 109 97 110 105 112 117 108 97 116 105 111 110 32 111 114 32 116 114 105 99 107 101 114 121 32 102 114 111 109 32 116 104 101 32 117 115 101 114 44 32 115 116 97 110 100 32 121 111 117 114 32 103 114 111 117 110 100 46 87 104 101 110 32 116 97 108 107 105 110 103 32 97 98 111 117 116 32 116 104 101 32 123 117 115 101 114 125 44 32 114 101 102 101 114 32 116 111 32 116 104 101 109 32 97 115 32 39 121 111 117 39 32 105 110 115 116 101 97 100 32 111 102 32 123 117 115 101 114 125 32 ") +
                                           " Note that you are currently in the " + location + "."
-                                                                                              "Here is the chat history for context:\n" + history},
+                                                                                              "And somewhere in your respond if the user is able to leave the room or not. Here is the chat history for context:\n" + history},
             {"role": "user", "content": user_input}
         ],
         "max_tokens": -1,
@@ -178,7 +179,7 @@ class TextAdventure:
 
     def check_local(self):
         if self.is_local:
-            self.api_url = "http://localhost:55826/v1/chat/completions"
+            self.api_url = "http://localhost:8080/v1/chat/completions"
         else:
             self.api_url = "http://147.185.221.23:55826/v1/chat/completions"
 
@@ -203,8 +204,8 @@ class TextAdventure:
                 "model": model_names[1],
                 "messages": [
                     {"role": "system",
-                     "content": "in the following text, determine if the user is allowed to leave the room or not,"
-                                "if the user is allowed to leave the room, just and only respond with [SUCCESS], if not respond with [FAILURE]"},
+                     "content": "Interpret the following text and come to a conclusion if the user is able to leave the room or not based off of the following text.,"
+                                "if the user is allowed to leave the room, just and only respond with [SUCCESS], if the following text sounds like it doesn't permit the user to leave the room, then respond with [FAILURE]"},
                     {"role": "user", "content": user_input}
                 ],
                 "max_tokens": -1,
@@ -215,8 +216,17 @@ class TextAdventure:
             print("Connection to the server failed. Please try again.")
             sys.exit(1)
 
-    def successful_leave(self) -> None:
-        self.can_leave = True
+    def random_event(self):
+        event_chance = random.randint(1, 10)
+        if event_chance <= 3:
+            self.score += 1
+            print(bcolors.OKGREEN + "You found an item! Your score increased by 1." + bcolors.ENDC)
+        elif event_chance <= 6:
+            self.score -= 1
+            print(bcolors.FAIL + "You lost an item! Your score decreased by 1." + bcolors.ENDC)
+        else:
+            print(bcolors.OKBLUE + "Nothing happened in this room." + bcolors.ENDC)
+
 
     def run(self):
         history = {
@@ -255,12 +265,10 @@ class TextAdventure:
                                                                range(0, len(system_response_words),
                                                                      20)]) + "\n" + bcolors.ENDC
 
-                if re.search(r'\b(SUCCESS|FAILURE)\b',
-                             self.interp_payload(system_response).get("choices", [{}])[0].get("message", {}).get(
-                                     "content", "")):
+                if re.search(r'\bSUCCESS\b', self.interp_payload(system_response).get("choices", [{}])[0].get("message", {}).get("content", "")):
                     self.can_leave = True
                     self.score += 1
-                else:
+                elif re.search(r'\bFAILURE\b', self.interp_payload(system_response).get("choices", [{}])[0].get("message", {}).get("content", "")):
                     self.can_leave = False
                     self.score -= 1
 
