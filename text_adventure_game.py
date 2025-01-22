@@ -81,31 +81,7 @@ def sim_payload(user_input: str, history: str, location: str):
     }
 
 
-def send_title(title: bool) -> None:
-    title_screen = r"""
-        
-     _________  ________  ___  ___  ________   ________  _______   ________  _______           ________  ___  _____ ______   ___  ___  ___       ________  _________  ________  ________     
-    |\___   ___|\   ____\|\  \|\  \|\   ___  \|\   ___ \|\  ___ \ |\   __  \|\  ___ \         |\   ____\|\  \|\   _ \  _   \|\  \|\  \|\  \     |\   __  \|\___   ___|\   __  \|\   __  \    
-    \|___ \  \_\ \  \___|\ \  \\\  \ \  \\ \  \ \  \_|\ \ \   __/|\ \  \|\  \ \   __/|        \ \  \___|\ \  \ \  \\\__\ \  \ \  \\\  \ \  \    \ \  \|\  \|___ \  \_\ \  \|\  \ \  \|\  \   
-         \ \  \ \ \_____  \ \  \\\  \ \  \\ \  \ \  \ \\ \ \  \_|/_\ \   _  _\ \  \_|/__       \ \_____  \ \  \ \  \\|__| \  \ \  \\\  \ \  \    \ \   __  \   \ \  \ \ \  \\\  \ \   _  _\  
-          \ \  \ \|____|\  \ \  \\\  \ \  \\ \  \ \  \_\\ \ \  \_|\ \ \  \\  \\ \  \_|\ \       \|____|\  \ \  \ \  \    \ \  \ \  \\\  \ \  \____\ \  \ \  \   \ \  \ \ \  \\\  \ \  \\  \| 
-           \ \__\  ____\_\  \ \_______\ \__\\ \__\ \_______\ \_______\ \__\\ _\\ \_______\        ____\_\  \ \__\ \__\    \ \__\ \_______\ \_______\ \__\ \__\   \ \__\ \ \_______\ \__\\ _\ 
-            \|__| |\_________\|_______|\|__| \|__|\|_______|\|_______|\|__|\|__|\|_______|       |\_________\|__|\|__|     \|__|\|_______|\|_______|\|__|\|__|    \|__|  \|_______|\|__|\|__|
-                  \|_________|                                                                   \|_________|                                                                                
-    +-------------------------------------------------------------------------------------------------------------------------------------------------------------+
-    | Your job is to attempt to escape the room you're trapped in by your tsundere girlfriend. You will be scored based on if you can leave or not. Good luck! :3 |
-    +-------------------------------------------------------------------------------------------------------------------------------------------------------------+
-                    """
-    print(title_screen)
 
-    print("Menu:".title().center(25, "-"))
-    print("1. Enter a message to send")
-    print("2. Move to the bedroom")
-    print("3. Move to the bathroom")
-    print("4. Move to the kitchen")
-    print("5. Move to the living room")
-    print("6. Attempt to leave the room")
-    print("7. Exit")
 
 
 def get_input() -> str:
@@ -177,6 +153,33 @@ class TextAdventure:
                 print("Invalid URL. Using default remote server URL.")
                 pass
 
+    def send_title(self):
+        if self.first_run:
+            title_screen = r"""
+             _________  ________  ___  ___  ________   ________  _______   ________  _______           ________  ___  _____ ______   ___  ___  ___       ________  _________  ________  ________
+            |\___   ___|\   ____\|\  \|\  \|\   ___  \|\   ___ \|\  ___ \ |\   __  \|\  ___ \         |\   ____\|\  \|\   _ \  _   \|\  \|\  \|\  \     |\   __  \|\___   ___|\   __  \|\   __  \
+            \|___ \  \_\ \  \___|\ \  \\\  \ \  \\ \  \ \  \_|\ \ \   __/|\ \  \|\  \ \   __/|        \ \  \___|\ \  \ \  \\\__\ \  \ \  \\\  \ \  \    \ \  \|\  \|___ \  \_\ \  \|\  \ \  \|\  \
+                 \ \  \ \ \_____  \ \  \\\  \ \  \\ \  \ \  \ \\ \ \  \_|/_\ \   _  _\ \  \_|/__       \ \_____  \ \  \ \  \\|__| \  \ \  \\\  \ \  \    \ \   __  \   \ \  \ \ \  \\\  \ \   _  _\
+                  \ \  \ \|____|\  \ \  \\\  \ \  \\ \  \ \  \_\\ \ \  \_|\ \ \  \\  \\ \  \_|\ \       \|____|\  \ \  \ \  \    \ \  \ \  \\\  \ \  \____\ \  \ \  \   \ \  \ \ \  \\\  \ \  \\  \|
+                   \ \__\  ____\_\  \ \_______\ \__\\ \__\ \_______\ \_______\ \__\\ _\\ \_______\        ____\_\  \ \__\ \__\    \ \__\ \_______\ \_______\ \__\ \__\   \ \__\ \ \_______\ \__\\ _\
+                    \|__| |\_________\|_______|\|__| \|__|\|_______|\|_______|\|__|\|__|\|_______|       |\_________\|__|\|__|     \|__|\|_______|\|_______|\|__|\|__|    \|__|  \|_______|\|__|\|__|
+                          \|_________|                                                                   \|_________|
+            +-------------------------------------------------------------------------------------------------------------------------------------------------------------+
+            | Your job is to attempt to escape the room you're trapped in by your tsundere girlfriend. You will be scored based on if you can leave or not. Good luck! :3 |
+            +-------------------------------------------------------------------------------------------------------------------------------------------------------------+
+                            """
+            print(title_screen)
+            self.first_run = False
+
+        print("Menu:".title().center(25, "-"))
+        print("1. Enter a message to send")
+        print("2. Move to the bedroom")
+        print("3. Move to the bathroom")
+        print("4. Move to the kitchen")
+        print("5. Move to the living room")
+        print("6. Attempt to leave the room")
+        print("7. Exit")
+
     def check_local(self):
         if self.is_local:
             self.api_url = "http://localhost:8080/v1/chat/completions"
@@ -236,7 +239,7 @@ class TextAdventure:
 
         if self.is_local: load_model()
         self.check_local()
-        send_title(self.first_run)
+        self.send_title()
 
         while True:
             try:
@@ -276,29 +279,14 @@ class TextAdventure:
                 print(bcolors.OKGREEN + "System Response:\n" + system_response + bcolors.ENDC)
                 print(bcolors.WARNING + "Score: " + str(self.score) + bcolors.ENDC)
 
-            elif choice == 2:
-                self.current_room = "bedroom"
-                print("You have moved to the bedroom.")
-                clear_console()
-                send_title(self.first_run)
 
-            elif choice == 3:
-                self.current_room = "bathroom"
-                print("You have moved to the bathroom.")
+            elif choice in [2, 3, 4, 5]:
+                rooms = {2: "bedroom", 3: "bathroom", 4: "kitchen", 5: "living room"}
+                self.current_room = rooms[choice]
+                print(f"You have moved to the {self.current_room}.")
+                self.random_event()
                 clear_console()
-                send_title(self.first_run)
-
-            elif choice == 4:
-                self.current_room = "kitchen"
-                print("You have moved to the kitchen.")
-                clear_console()
-                send_title(self.first_run)
-
-            elif choice == 5:
-                self.current_room = "living room"
-                print("You have moved to the living room.")
-                clear_console()
-                send_title(self.first_run)
+                self.send_title()
 
             elif choice == 6:
                 if self.can_leave:
