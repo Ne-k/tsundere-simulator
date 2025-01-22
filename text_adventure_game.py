@@ -122,8 +122,10 @@ class TextAdventure:
         After you've installed LMStudio, run this program and you'll be able to play the game.
         If you run into issues that I haven't accounted for, please let me know at my Discord nek.colon3 and I'll try to help you out as best as I can.
         
-        For one of the following options it'll ask if you want to use a local or remote server, if you're running LMStudio locally then select local,
+        For one of the following options it'll ask if you want to use a local or remote server, if you're running the LMStudio API locally then select local,
         otherwise select remote if you have been given a publicly accessible ip for the API.
+        
+        Is this too complicated? Yes, was this fun to make? Yes, did I have fun making this? No, do I regret making this? Yes, would I make this again? No.
         """)
 
         x = input("Do you have LMStudio installed? If you don't, then run install.py. (yes/no): ").strip().lower()
